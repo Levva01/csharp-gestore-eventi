@@ -1,4 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using System.Xml.Linq;
+
 Console.WriteLine("Hello, World!");
 
 
@@ -49,5 +51,45 @@ public class Evento
         Date = date;
         CapienzaMassima = capienzaMassima;
         PostiPrenotati = 0;
+    }
+
+    public int PrenotaPosti(Evento e, int postiDaAggiungere)
+    {
+        if(e.PostiPrenotati + postiDaAggiungere >= e.CapienzaMassima)
+        {
+            Console.WriteLine("Capienza Massima superata");
+            return e.PostiPrenotati;
+        } else
+        {
+            e.PostiPrenotati += postiDaAggiungere;
+            return e.PostiPrenotati;
+        }
+    }
+
+    public int DisdiciPosti(Evento e, int postiDaRimuovere)
+    {
+        if(postiDaRimuovere >= e.PostiPrenotati)
+        {
+            Console.WriteLine("Numeri di posti prenotati inferiori a quelli da rimuovere.");
+            return e.PostiPrenotati;
+        }
+
+
+        if (e.PostiPrenotati - postiDaRimuovere >= e.CapienzaMassima)
+        {
+            Console.WriteLine("Capienza Massima superata");
+            return e.PostiPrenotati;
+        }
+        else
+        {
+            e.PostiPrenotati -= postiDaRimuovere;
+            return e.PostiPrenotati;
+        }
+    }
+
+    public override string ToString()
+    {
+        string dateFormat = "dd/MM/yyyy";
+        return dateFormat;
     }
 }
