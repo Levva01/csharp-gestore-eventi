@@ -1,81 +1,83 @@
-﻿// See https://aka.ms/new-console-template for more information
-public class Evento
+﻿public class Evento
 {
-    public string Titolo {
-        get;
-        set;
-    }
-
+    public string Titolo { get; set; }
+    private DateOnly date;
     public DateOnly Date { 
-        get => Date;
+        get => date;
         set
         {
-            if (value >= DateOnly.FromDateTime(DateTime.Now))
-                Date = value;
-            else Console.WriteLine("Data passata");
-
+            if (value <= DateOnly.FromDateTime(DateTime.Now))
+                throw new ArgumentException("La data non può essere passata");
+            
+            date = value;
         }
     }
 
-    public int CapienzaMassima {
-        get;
-        set;
-    }
+    public int Capienza { get; private set; }
+    public int PostiPrenotati { get; private set; }
 
-    public int PostiPrenotati { 
-        get;
-        set;
-    }
+    public Evento() { }
 
-    public Evento(string titolo, DateOnly date, int capienzaMassima)
+    public Evento(string titolo, DateOnly date, int capienza)
     {
+        if(titolo == "")
+        {
+            throw new ArgumentException("Il titolo non può essere vuoto");
+        }
         Titolo = titolo;
+        if(date < DateOnly.FromDateTime(DateTime.Now))
+        {
+            throw new ArgumentException("La data deve essere futura");
+        }
         Date = date;
-        CapienzaMassima = capienzaMassima;
+        if(capienza < 1)
+        {
+            throw new ArgumentException("La capienza disponibile deve essere maggiore di 0");
+        }
+        Capienza = capienza;
         PostiPrenotati = 0;
     }
 
-    public Evento()
+
+    public void PrenotaPosti(int postiDaAggiungere)
     {
+        if(postiDaAggiungere < 1)
+        {
+            throw new ArgumentException("I posti da aggiungere devono essere più di 0.");
+        }
+
+        if(postiDaAggiungere > Capienza - PostiPrenotati)
+        {
+            throw new ArgumentException("Posti non disponibili");
+        }
+
+        PostiPrenotati += postiDaAggiungere;
+        Capienza -= postiDaAggiungere;
     }
 
-    public int PrenotaPosti(Evento e, int postiDaAggiungere)
+    public void DisdiciPosti(int postiDaRimuovere)
     {
-        if(e.PostiPrenotati + postiDaAggiungere >= e.CapienzaMassima)
+        if(postiDaRimuovere < 1)
         {
-            Console.WriteLine("Capienza Massima superata");
-            return e.PostiPrenotati;
-        } else
-        {
-            e.PostiPrenotati += postiDaAggiungere;
-            return e.PostiPrenotati;
-        }
-    }
-
-    public int DisdiciPosti(Evento e, int postiDaRimuovere)
-    {
-        if(postiDaRimuovere >= e.PostiPrenotati)
-        {
-            Console.WriteLine("Numeri di posti prenotati inferiori a quelli da rimuovere.");
-            return e.PostiPrenotati;
+            throw new ArgumentException("I posti da rimuovere devono essere più di 0");
         }
 
+        if (postiDaRimuovere > PostiPrenotati)
+        {
+            throw new ArgumentException("Le sedie da rimuovere superano di numero le sedie prenotate");
+        }
+        
+        if(DateOnly.FromDateTime(DateTime.Now) > Date)
+        {
+            throw new ArgumentException("L'evento è gia passato.");
+        }
 
-        if (e.PostiPrenotati - postiDaRimuovere >= e.CapienzaMassima)
-        {
-            Console.WriteLine("Capienza Massima superata");
-            return e.PostiPrenotati;
-        }
-        else
-        {
-            e.PostiPrenotati -= postiDaRimuovere;
-            return e.PostiPrenotati;
-        }
+        PostiPrenotati -= postiDaRimuovere;
+        Capienza += postiDaRimuovere;
     }
 
     public override string ToString()
     {
-        string dateFormat = "dd/MM/yyyy";
-        return dateFormat;
+        return $"{Date.ToString("dd/MM/yyyy")} - {Titolo}";
     }
 }
