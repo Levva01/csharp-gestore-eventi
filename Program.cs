@@ -1,95 +1,32 @@
-﻿// See https://aka.ms/new-console-template for more information
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
-Console.WriteLine("Hello, World!");
+Evento e = new Evento();
+Console.WriteLine("Inserisci il nome dell'evento: ");
+e.Titolo = Console.ReadLine();
+/*
+Console.WriteLine("Inserisci la data dell'evento (gg/mm/yyyy): ");
+e.Date = DateOnly.Parse(Console.ReadLine()); 
+*/
+Console.WriteLine("Inserisci il numero di posti totali: ");
+e.CapienzaMassima = Convert.ToInt32(Console.ReadLine());
+Console.WriteLine("");
 
+Console.WriteLine("Vuoi disdire dei posti: si/no");
+string scelta = Console.ReadLine();
 
-public class Evento
+do
 {
-    public string Titolo {
-        get => Titolo;
-        set
-        {
-            if (!string.IsNullOrEmpty(value))
-                Titolo = value;
-            else Console.WriteLine("String vuota");
-        }
-    }
-
-    public DateOnly Date { 
-        get => Date;
-        set
-        {
-            if (value >= DateOnly.FromDateTime(DateTime.Now))
-                Date = value;
-            else Console.WriteLine("Data passata");
-
-        }
-    }
-
-    public int CapienzaMassima { 
-        get => CapienzaMassima;
-        private set
-        {
-            if (value >= 0)
-                CapienzaMassima = value;
-            else Console.WriteLine("La capienza massima non può essere negativa");
-        }
-    }
-
-    public int PostiPrenotati { 
-        get => PostiPrenotati;
-        private set 
-        {
-            PostiPrenotati = value;    
-        }
-    }
-
-    public Evento(string titolo, DateOnly date, int capienzaMassima)
+    if (scelta == "si")
     {
-        Titolo = titolo;
-        Date = date;
-        CapienzaMassima = capienzaMassima;
-        PostiPrenotati = 0;
+        Console.WriteLine("Inserisci il numero di posti da disdire: ");
+        e.PostiPrenotati = e.DisdiciPosti(e, Convert.ToInt32(Console.ReadLine()));
     }
-
-    public int PrenotaPosti(Evento e, int postiDaAggiungere)
+    else if (scelta == "no")
     {
-        if(e.PostiPrenotati + postiDaAggiungere >= e.CapienzaMassima)
-        {
-            Console.WriteLine("Capienza Massima superata");
-            return e.PostiPrenotati;
-        } else
-        {
-            e.PostiPrenotati += postiDaAggiungere;
-            return e.PostiPrenotati;
-        }
+        Console.WriteLine("Hai scelto di non modificare i posti prenotati");
     }
-
-    public int DisdiciPosti(Evento e, int postiDaRimuovere)
+    else
     {
-        if(postiDaRimuovere >= e.PostiPrenotati)
-        {
-            Console.WriteLine("Numeri di posti prenotati inferiori a quelli da rimuovere.");
-            return e.PostiPrenotati;
-        }
-
-
-        if (e.PostiPrenotati - postiDaRimuovere >= e.CapienzaMassima)
-        {
-            Console.WriteLine("Capienza Massima superata");
-            return e.PostiPrenotati;
-        }
-        else
-        {
-            e.PostiPrenotati -= postiDaRimuovere;
-            return e.PostiPrenotati;
-        }
+        Console.WriteLine("Scelta in formato non corretto!");
     }
-
-    public override string ToString()
-    {
-        string dateFormat = "dd/MM/yyyy";
-        return dateFormat;
-    }
-}
+} while (scelta != "no");
